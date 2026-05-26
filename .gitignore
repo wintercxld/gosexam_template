@@ -27,3 +27,6 @@ appsettings.*.local.json
 
 ## Logs
 *.log
+
+## Tmp commit message files
+.git-commit-msg.tmp
