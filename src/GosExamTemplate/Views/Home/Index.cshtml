@@ -1,0 +1,61 @@
+﻿@model GosExamTemplate.Dtos.Items.PublicItemsFilterDto
+@{
+    ViewData["Title"] = "Каталог";
+}
+
+<section class="page-header">
+    <div>
+        <h1 class="h3 mb-1">Каталог записей</h1>
+        <p class="text-muted mb-0 small">Публичная страница со всеми записями. Поиск, фильтр по автору и тегу + диапазон цены.</p>
+    </div>
+</section>
+
+<form class="filter-panel mb-3" method="get" asp-controller="Home" asp-action="Index" data-auto-submit>
+    <div class="row g-2">
+        <div class="col-12 col-md-4">
+            <label class="form-label small text-muted mb-1">Поиск по названию</label>
+            <input asp-for="Search" type="search" class="form-control" placeholder="Введите часть названия..." />
+        </div>
+        <div class="col-12 col-sm-6 col-md-3">
+            <label class="form-label small text-muted mb-1">Автор</label>
+            <input asp-for="Owner" type="text" class="form-control" placeholder="Имя автора" list="ownerList" />
+            <datalist id="ownerList">
+                @foreach (var owner in Model.AvailableOwners)
+                {
+                    <option value="@owner.Value"></option>
+                }
+            </datalist>
+        </div>
+        <div class="col-6 col-md-2">
+            <label class="form-label small text-muted mb-1">Тег</label>
+            <select asp-for="TagId" class="form-select" asp-items="Model.AvailableTags">
+                <option value="">Любой</option>
+            </select>
+        </div>
+        <div class="col-3 col-md-1">
+            <label class="form-label small text-muted mb-1">Цена от</label>
+            <input asp-for="PriceFrom" type="number" step="0.01" min="0" class="form-control" />
+        </div>
+        <div class="col-3 col-md-1">
+            <label class="form-label small text-muted mb-1">до</label>
+            <input asp-for="PriceTo" type="number" step="0.01" min="0" class="form-control" />
+        </div>
+        <div class="col-12 col-md-1 d-flex align-items-end">
+            <a asp-controller="Home" asp-action="Index" class="btn btn-outline-secondary w-100">Сброс</a>
+        </div>
+    </div>
+</form>
+
+@if (Model.Items.Count == 0)
+{
+    <div class="empty-state">Ничего не найдено по заданным критериям.</div>
+}
+else
+{
+    <div class="row g-3">
+        @foreach (var item in Model.Items)
+        {
+            <partial name="~/Views/Items/_ItemCard.cshtml" model="item" />
+        }
+    </div>
+}

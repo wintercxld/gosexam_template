@@ -1,0 +1,20 @@
+@model GosExamTemplate.Dtos.Tags.TagDto
+@{
+    ViewData["Title"] = "Удаление тега";
+}
+
+<section class="page-header">
+    <h1 class="h3 mb-0">Удалить тег?</h1>
+    <a asp-action="Index" class="btn btn-outline-secondary btn-sm">Отмена</a>
+</section>
+
+<div class="card">
+    <div class="card-body">
+        <p>Тег <strong>#@Model.Name</strong> и все его связи с записями будут удалены.</p>
+        <form method="post" asp-action="Delete" asp-route-id="@Model.Id" data-disable-on-submit>
+            @Html.AntiForgeryToken()
+            <button type="submit" class="btn btn-danger">Удалить</button>
+            <a asp-action="Index" class="btn btn-link">Отмена</a>
+        </form>
+    </div>
+</div>

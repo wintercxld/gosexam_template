@@ -1,0 +1,29 @@
+## .NET
+[Bb]in/
+[Oo]bj/
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+*.vs/
+
+## Rider/Visual Studio
+.idea/
+.vs/
+
+## OS / Editor
+Thumbs.db
+.DS_Store
+
+## Node / ESLint
+node_modules/
+.eslintcache
+
+## App-specific
+*.db
+*.db-shm
+*.db-wal
+appsettings.*.local.json
+
+## Logs
+*.log

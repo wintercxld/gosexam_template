@@ -1,0 +1,73 @@
+﻿@using Microsoft.AspNetCore.Identity
+@using GosExamTemplate.Models.Entities
+@inject SignInManager<ApplicationUser> SignInManager
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] · Универсальный шаблон</title>
+    <script type="importmap"></script>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/GosExamTemplate.styles.css" asp-append-version="true" />
+</head>
+<body class="d-flex flex-column min-vh-100 bg-light">
+    <header>
+        <nav class="navbar navbar-expand-md navbar-dark bg-dark mb-3 shadow-sm">
+            <div class="container-fluid">
+                <a class="navbar-brand fw-semibold" asp-controller="Home" asp-action="Index">
+                    <span class="me-1">▣</span> Универсальный шаблон
+                </a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNavbar"
+                        aria-controls="mainNavbar" aria-expanded="false" aria-label="Меню">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="mainNavbar">
+                    <ul class="navbar-nav me-auto mb-2 mb-md-0">
+                        <li class="nav-item">
+                            <a class="nav-link" asp-controller="Home" asp-action="Index">Каталог</a>
+                        </li>
+                        @if (SignInManager.IsSignedIn(User))
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link" asp-controller="Items" asp-action="My">Мои записи</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" asp-controller="Orders" asp-action="Index">Заказы</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" asp-controller="Categories" asp-action="Index">Категории</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" asp-controller="Tags" asp-action="Index">Теги</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="btn btn-success btn-sm ms-md-2 mt-2 mt-md-0" asp-controller="Items" asp-action="Create">+ Создать</a>
+                            </li>
+                        }
+                    </ul>
+                    <partial name="_LoginPartial" />
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <main role="main" class="container-fluid container-xl flex-grow-1 pb-4">
+        <partial name="_Toasts" />
+        @RenderBody()
+    </main>
+
+    <footer class="border-top bg-white py-3 mt-auto">
+        <div class="container-fluid container-xl d-flex flex-column flex-md-row justify-content-between align-items-md-center">
+            <span class="text-muted small">&copy; @DateTime.Now.Year — Универсальный шаблон госэкзамена</span>
+            <a class="small text-muted" asp-controller="Home" asp-action="Privacy">Конфиденциальность</a>
+        </div>
+    </footer>
+
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

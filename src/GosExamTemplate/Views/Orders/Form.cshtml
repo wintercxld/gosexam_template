@@ -1,0 +1,53 @@
+@model GosExamTemplate.Dtos.Orders.OrderFormDto
+@{
+    var isEdit = Model.Id.HasValue && Model.Id.Value > 0;
+    ViewData["Title"] = isEdit ? "Редактирование заказа" : "Новый заказ";
+}
+
+<section class="page-header">
+    <h1 class="h3 mb-0">@ViewData["Title"]</h1>
+    <a asp-action="Index" class="btn btn-outline-secondary btn-sm">К списку</a>
+</section>
+
+<div class="card">
+    <div class="card-body">
+        <form method="post" asp-action="@(isEdit ? "Edit" : "Create")" data-disable-on-submit>
+            <input type="hidden" asp-for="Id" />
+            <div asp-validation-summary="ModelOnly" class="alert alert-danger d-none-when-empty"></div>
+
+            <div class="row g-3">
+                <div class="col-12 col-md-6">
+                    <label asp-for="ItemId" class="form-label"></label>
+                    <select asp-for="ItemId" asp-items="Model.AvailableItems" class="form-select">
+                        <option value="">Выберите запись</option>
+                    </select>
+                    <span asp-validation-for="ItemId" class="text-danger small"></span>
+                </div>
+                <div class="col-6 col-md-3">
+                    <label asp-for="Quantity" class="form-label"></label>
+                    <input asp-for="Quantity" type="number" min="1" class="form-control" />
+                    <span asp-validation-for="Quantity" class="text-danger small"></span>
+                </div>
+                <div class="col-6 col-md-3">
+                    <label asp-for="Status" class="form-label"></label>
+                    <select asp-for="Status" class="form-select"
+                            asp-items="Html.GetEnumSelectList<GosExamTemplate.Models.Entities.OrderStatus>()"></select>
+                </div>
+                <div class="col-12">
+                    <label asp-for="Comment" class="form-label"></label>
+                    <textarea asp-for="Comment" class="form-control" rows="3"></textarea>
+                    <span asp-validation-for="Comment" class="text-danger small"></span>
+                </div>
+            </div>
+
+            <div class="mt-4 d-flex gap-2">
+                <button type="submit" class="btn btn-primary">@(isEdit ? "Сохранить" : "Создать")</button>
+                <a asp-action="Index" class="btn btn-link">Отмена</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

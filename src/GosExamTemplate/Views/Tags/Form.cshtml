@@ -1,0 +1,30 @@
+@model GosExamTemplate.Dtos.Tags.TagDto
+@{
+    var isEdit = Model.Id > 0;
+    ViewData["Title"] = isEdit ? "Редактирование тега" : "Новый тег";
+}
+
+<section class="page-header">
+    <h1 class="h3 mb-0">@ViewData["Title"]</h1>
+    <a asp-action="Index" class="btn btn-outline-secondary btn-sm">К списку</a>
+</section>
+
+<div class="card">
+    <div class="card-body">
+        <form method="post" asp-action="@(isEdit ? "Edit" : "Create")" data-disable-on-submit>
+            <input type="hidden" asp-for="Id" />
+            <div asp-validation-summary="ModelOnly" class="alert alert-danger d-none-when-empty"></div>
+            <div class="mb-3">
+                <label asp-for="Name" class="form-label"></label>
+                <input asp-for="Name" class="form-control" autocomplete="off" />
+                <span asp-validation-for="Name" class="text-danger small"></span>
+            </div>
+            <button type="submit" class="btn btn-primary">@(isEdit ? "Сохранить" : "Создать")</button>
+            <a asp-action="Index" class="btn btn-link">Отмена</a>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

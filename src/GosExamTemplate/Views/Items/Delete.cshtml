@@ -1,0 +1,25 @@
+@model GosExamTemplate.Dtos.Items.ItemDetailsDto
+@{
+    ViewData["Title"] = "Удаление записи";
+}
+
+<section class="page-header">
+    <h1 class="h3 mb-0">Удалить запись?</h1>
+    <a asp-action="Details" asp-route-id="@Model.Id" class="btn btn-outline-secondary btn-sm">Отмена</a>
+</section>
+
+<div class="card">
+    <div class="card-body">
+        <p>Вы собираетесь удалить запись <strong>@Model.Title</strong>. Действие нельзя отменить.</p>
+        <dl class="row small text-muted mb-3">
+            <dt class="col-sm-3">Категория</dt><dd class="col-sm-9">@Model.CategoryName</dd>
+            <dt class="col-sm-3">Цена</dt><dd class="col-sm-9">@Model.Price.ToString("N2") ₽</dd>
+            <dt class="col-sm-3">Создано</dt><dd class="col-sm-9">@Model.CreatedAt.ToLocalTime().ToString("d MMM yyyy HH:mm")</dd>
+        </dl>
+        <form method="post" asp-action="Delete" asp-route-id="@Model.Id" data-disable-on-submit>
+            @Html.AntiForgeryToken()
+            <button type="submit" class="btn btn-danger">Удалить безвозвратно</button>
+            <a asp-action="Details" asp-route-id="@Model.Id" class="btn btn-link">Отмена</a>
+        </form>
+    </div>
+</div>

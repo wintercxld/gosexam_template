@@ -1,0 +1,24 @@
+@model GosExamTemplate.Dtos.Categories.CategoryDto
+@{
+    ViewData["Title"] = "Удаление категории";
+}
+
+<section class="page-header">
+    <h1 class="h3 mb-0">Удалить категорию?</h1>
+    <a asp-action="Index" class="btn btn-outline-secondary btn-sm">Отмена</a>
+</section>
+
+<div class="card">
+    <div class="card-body">
+        <p>Категория <strong>@Model.Name</strong> будет удалена.</p>
+        @if (Model.ItemsCount > 0)
+        {
+            <div class="alert alert-warning">К категории привязано @Model.ItemsCount записей — сначала переназначьте их.</div>
+        }
+        <form method="post" asp-action="Delete" asp-route-id="@Model.Id" data-disable-on-submit>
+            @Html.AntiForgeryToken()
+            <button type="submit" class="btn btn-danger" @(Model.ItemsCount > 0 ? "disabled" : "")>Удалить</button>
+            <a asp-action="Index" class="btn btn-link">Отмена</a>
+        </form>
+    </div>
+</div>

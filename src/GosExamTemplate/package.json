@@ -1,0 +1,15 @@
+{
+  "name": "gosexam-template",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Универсальный шаблон госэкзаменационного веб-приложения на ASP.NET Core MVC. JS-зависимости здесь нужны только для линтинга клиентских скриптов.",
+  "scripts": {
+    "lint": "eslint \"wwwroot/js/**/*.js\""
+  },
+  "dependencies": {},
+  "devDependencies": {
+    "@eslint/js": "^9.16.0",
+    "eslint": "^9.16.0",
+    "globals": "^15.13.0"
+  }
+}

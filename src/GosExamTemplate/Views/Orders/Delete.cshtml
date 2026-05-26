@@ -1,0 +1,26 @@
+@model GosExamTemplate.Dtos.Orders.OrderListDto
+@{
+    ViewData["Title"] = "Удаление заказа";
+}
+
+<section class="page-header">
+    <h1 class="h3 mb-0">Удалить заказ?</h1>
+    <a asp-action="Index" class="btn btn-outline-secondary btn-sm">Отмена</a>
+</section>
+
+<div class="card">
+    <div class="card-body">
+        <dl class="row mb-3">
+            <dt class="col-sm-3">Запись</dt><dd class="col-sm-9">@Model.ItemTitle</dd>
+            <dt class="col-sm-3">Количество</dt><dd class="col-sm-9">@Model.Quantity</dd>
+            <dt class="col-sm-3">Статус</dt><dd class="col-sm-9">@Model.Status</dd>
+            <dt class="col-sm-3">Создан</dt><dd class="col-sm-9">@Model.CreatedAt.ToLocalTime().ToString("d MMM yyyy HH:mm")</dd>
+            <dt class="col-sm-3">Комментарий</dt><dd class="col-sm-9 text-muted">@Model.Comment</dd>
+        </dl>
+        <form method="post" asp-action="Delete" asp-route-id="@Model.Id" data-disable-on-submit>
+            @Html.AntiForgeryToken()
+            <button type="submit" class="btn btn-danger">Удалить</button>
+            <a asp-action="Index" class="btn btn-link">Отмена</a>
+        </form>
+    </div>
+</div>
