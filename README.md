@@ -1,6 +1,8 @@
 # Универсальный шаблон госэкзаменационного веб-приложения
 
-ASP.NET Core MVC 10 + EF Core + PostgreSQL + Identity + Bootstrap 5.
+ASP.NET Core MVC 8 + EF Core + PostgreSQL + Identity + Bootstrap 5.
+
+> Эта ветка (`net8`) таргетится на **.NET 8 (LTS до ноября 2026)** для максимальной совместимости с университетскими компьютерами. Ветка `main` таргетит .NET 10. Если на машине стоит SDK ≥ 8 — эта ветка соберётся без проблем (.NET 8/9/10/11 — все подходят).
 
 ## Описание варианта
 
@@ -91,9 +93,11 @@ erDiagram
 
 | Компонент | Версия | Зачем |
 |---|---|---|
-| .NET SDK | 10.0+ (LTS) | Сборка и запуск приложения |
+| .NET SDK | 8.0+ (LTS) — подходит 8, 9, 10 | Сборка и запуск приложения |
 | PostgreSQL | 14+ (тестировалось на 18) | Хранилище |
 | Node.js | 20+ | Только для ESLint (на запуск приложения не влияет) |
+
+Проверить версию SDK: `dotnet --list-sdks`. Если есть строка `8.0.*` или новее — всё ок.
 
 ### Параметры подключения по умолчанию
 
@@ -162,22 +166,49 @@ dotnet run --project src/GosExamTemplate --launch-profile http
 # приложение увидит пустую таблицу Items и запустит DbSeeder
 ```
 
+### Если на экзаменационном компе другой .NET
+
+Сначала проверьте, что вообще установлено:
+
+```powershell
+dotnet --list-sdks       # покажет все SDK
+dotnet --list-runtimes   # покажет все рантаймы
+```
+
+| Что показывает `--list-sdks` | Что делать |
+|---|---|
+| `8.0.*`, `9.0.*` или `10.0.*` (или любая комбинация) | Использовать эту ветку (`net8`). Сборка пойдёт на любом SDK ≥ 8. |
+| Только `6.0.*` или `7.0.*` (давно EoL) | Поставить .NET 8 SDK: `winget install Microsoft.DotNet.SDK.8` или скачать с https://dot.net/download. |
+| Пусто (нет ни одного SDK) | Поставить .NET 8 SDK тем же способом. Запросить у админа права при необходимости. |
+
+Минимальный план «достать .NET 8 без админ-прав»: на странице https://dot.net/download скачать ZIP-архив SDK для Windows x64, распаковать в `C:\Users\<вы>\dotnet`, добавить эту папку в `PATH` для текущей сессии:
+
+```powershell
+$env:PATH = "C:\Users\$env:USERNAME\dotnet;$env:PATH"
+dotnet --list-sdks   # должно появиться 8.0.x
+```
+
 ### Команды запуска (Способ A)
 
 ```powershell
-# 1. Сборка
+# 1. Восстановить локальные .NET-инструменты (EF Core CLI 8.0)
+dotnet tool restore
+
+# 2. Сборка
 dotnet build src/GosExamTemplate
 
-# 2. (Опционально) Установка JS-зависимостей для ESLint
+# 3. (Опционально) Установка JS-зависимостей для ESLint
 cd src/GosExamTemplate
 npm install
 cd ../..
 
-# 3. Запуск
+# 4. Запуск
 dotnet run --project src/GosExamTemplate --launch-profile http
 ```
 
 Откройте `http://localhost:5180`. На первом запуске миграция и сидер занимают 2–5 секунд.
+
+> Шаг 1 (`dotnet tool restore`) нужен только если планируете работать с миграциями (`dotnet ef migrations add`). Для обычного запуска приложения он необязателен — миграции применяются на старте автоматически.
 
 ### Тестовые учётные данные (после применения сидера или дампа)
 
@@ -205,9 +236,9 @@ npm run lint      # ожидается: пустой вывод (нет нару
 
 | Слой | Технология | Где код |
 |---|---|---|
-| Runtime | .NET 10 (LTS) | — |
-| Веб-фреймворк | ASP.NET Core MVC 10 | `Controllers/*` |
-| ORM | EF Core 10 | `Data/ApplicationDbContext.cs` |
+| Runtime | .NET 8 (LTS до ноября 2026) | — |
+| Веб-фреймворк | ASP.NET Core MVC 8 | `Controllers/*` |
+| ORM | EF Core 8 | `Data/ApplicationDbContext.cs` |
 | База данных | PostgreSQL через `Npgsql.EntityFrameworkCore.PostgreSQL` | конфиг в `appsettings.json` |
 | Аутентификация | ASP.NET Core Identity с кастомным `ApplicationUser` | `Models/Entities/ApplicationUser.cs` + `Program.cs` |
 | Авторизация | Глобальный `AuthorizeFilter` + `[AllowAnonymous]` на публичных | `Program.cs` (фильтр), `HomeController` (`[AllowAnonymous]`) |
