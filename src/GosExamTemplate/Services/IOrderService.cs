@@ -1,10 +1,15 @@
+using GosExamTemplate.Dtos.Common;
 using GosExamTemplate.Dtos.Orders;
 
 namespace GosExamTemplate.Services;
 
 public interface IOrderService
 {
-    Task<IReadOnlyList<OrderListDto>> GetMyOrdersAsync(string userId, CancellationToken ct = default);
+    Task<PagedIndexDto<OrderListDto>> GetMyOrdersAsync(
+        string userId,
+        int? page = null,
+        int? pageSize = null,
+        CancellationToken ct = default);
 
     Task<OrderListDto?> GetAsync(int id, string userId, CancellationToken ct = default);
 

@@ -1,10 +1,14 @@
+using GosExamTemplate.Dtos.Common;
 using GosExamTemplate.Dtos.Tags;
 
 namespace GosExamTemplate.Services;
 
 public interface ITagService
 {
-    Task<IReadOnlyList<TagDto>> GetAllAsync(CancellationToken ct = default);
+    Task<PagedIndexDto<TagDto>> GetPagedAsync(
+        int? page = null,
+        int? pageSize = null,
+        CancellationToken ct = default);
 
     Task<TagDto?> GetAsync(int id, CancellationToken ct = default);
 

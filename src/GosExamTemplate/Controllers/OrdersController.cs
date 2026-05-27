@@ -10,9 +10,9 @@ namespace GosExamTemplate.Controllers;
 public class OrdersController(IOrderService orders) : Controller
 {
     [HttpGet]
-    public async Task<IActionResult> Index(CancellationToken ct)
+    public async Task<IActionResult> Index(int? page, int? pageSize, CancellationToken ct)
     {
-        var model = await orders.GetMyOrdersAsync(GetCurrentUserId(), ct);
+        var model = await orders.GetMyOrdersAsync(GetCurrentUserId(), page, pageSize, ct);
         return View(model);
     }
 

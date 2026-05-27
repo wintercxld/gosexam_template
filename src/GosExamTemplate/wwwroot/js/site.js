@@ -33,6 +33,10 @@
         document.querySelectorAll('form[data-auto-submit]').forEach(function (form) {
             var timer = null;
             var triggerSubmit = function () {
+                var pageInput = form.querySelector('input[name="Page"]');
+                if (pageInput) {
+                    pageInput.value = '1';
+                }
                 window.clearTimeout(timer);
                 timer = window.setTimeout(function () { form.submit(); }, 350);
             };

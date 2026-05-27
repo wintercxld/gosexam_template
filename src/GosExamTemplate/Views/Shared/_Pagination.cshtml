@@ -1,0 +1,78 @@
+@model GosExamTemplate.Dtos.Common.PaginationViewModel
+@if (Model.TotalPages > 1)
+{
+    <nav class="pagination-panel mt-3" aria-label="Навигация по страницам">
+        <ul class="pagination justify-content-center flex-wrap mb-2">
+            <li class="page-item @(Model.Page <= 1 ? "disabled" : null)">
+                @if (Model.Page <= 1)
+                {
+                    <span class="page-link">Назад</span>
+                }
+                else
+                {
+                    <a class="page-link"
+                       href="@Url.Action(Model.Action, Model.Controller, Model.GetRouteForPage(Model.Page - 1))">Назад</a>
+                }
+            </li>
+
+            @{
+                var start = Math.Max(1, Model.Page - 2);
+                var end = Math.Min(Model.TotalPages, Model.Page + 2);
+            }
+
+            @if (start > 1)
+            {
+                <li class="page-item">
+                    <a class="page-link"
+                       href="@Url.Action(Model.Action, Model.Controller, Model.GetRouteForPage(1))">1</a>
+                </li>
+                @if (start > 2)
+                {
+                    <li class="page-item disabled"><span class="page-link">…</span></li>
+                }
+            }
+
+            @for (var pageNumber = start; pageNumber <= end; pageNumber++)
+            {
+                <li class="page-item @(pageNumber == Model.Page ? "active" : null)">
+                    @if (pageNumber == Model.Page)
+                    {
+                        <span class="page-link">@pageNumber</span>
+                    }
+                    else
+                    {
+                        <a class="page-link"
+                           href="@Url.Action(Model.Action, Model.Controller, Model.GetRouteForPage(pageNumber))">@pageNumber</a>
+                    }
+                </li>
+            }
+
+            @if (end < Model.TotalPages)
+            {
+                @if (end < Model.TotalPages - 1)
+                {
+                    <li class="page-item disabled"><span class="page-link">…</span></li>
+                }
+                <li class="page-item">
+                    <a class="page-link"
+                       href="@Url.Action(Model.Action, Model.Controller, Model.GetRouteForPage(Model.TotalPages))">@Model.TotalPages</a>
+                </li>
+            }
+
+            <li class="page-item @(Model.Page >= Model.TotalPages ? "disabled" : null)">
+                @if (Model.Page >= Model.TotalPages)
+                {
+                    <span class="page-link">Вперёд</span>
+                }
+                else
+                {
+                    <a class="page-link"
+                       href="@Url.Action(Model.Action, Model.Controller, Model.GetRouteForPage(Model.Page + 1))">Вперёд</a>
+                }
+            </li>
+        </ul>
+        <p class="text-center text-muted small mb-0">
+            Показано @Model.ShownFrom–@Model.ShownTo из @Model.TotalCount
+        </p>
+    </nav>
+}

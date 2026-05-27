@@ -12,6 +12,7 @@
 </section>
 
 <form class="filter-panel mb-3" method="get" asp-action="My" data-auto-submit>
+    <input type="hidden" asp-for="Page" />
     <div class="row g-2">
         <div class="col-12 col-md-3">
             <label class="form-label small text-muted mb-1">Поиск</label>
@@ -39,11 +40,24 @@
             <label class="form-label small text-muted mb-1">до</label>
             <input asp-for="PriceTo" type="number" step="0.01" min="0" class="form-control" />
         </div>
-        <div class="col-12 col-md-1 d-flex align-items-end">
+        <div class="col-6 col-md-1">
+            <label class="form-label small text-muted mb-1">На стр.</label>
+            <select asp-for="PageSize" class="form-select">
+                <option value="6">6</option>
+                <option value="12">12</option>
+                <option value="24">24</option>
+            </select>
+        </div>
+        <div class="col-6 col-md-1 d-flex align-items-end">
             <a asp-action="My" class="btn btn-outline-secondary w-100">Сброс</a>
         </div>
     </div>
 </form>
+
+@if (Model.TotalCount > 0)
+{
+    <p class="text-muted small mb-2">Найдено: @Model.TotalCount</p>
+}
 
 @if (Model.Items.Count == 0)
 {
@@ -60,4 +74,5 @@ else
             <partial name="_ItemCard" model="item" />
         }
     </div>
+    <partial name="_Pagination" model="Model.ToPagination()" />
 }

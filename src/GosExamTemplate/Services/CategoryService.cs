@@ -1,5 +1,6 @@
 using GosExamTemplate.Data;
 using GosExamTemplate.Dtos.Categories;
+using GosExamTemplate.Dtos.Common;
 using GosExamTemplate.Models.Entities;
 using Microsoft.EntityFrameworkCore;
 
@@ -7,11 +8,22 @@ namespace GosExamTemplate.Services;
 
 public class CategoryService(ApplicationDbContext db) : ICategoryService
 {
-    public async Task<IReadOnlyList<CategoryDto>> GetAllAsync(CancellationToken ct = default)
+    public async Task<PagedIndexDto<CategoryDto>> GetPagedAsync(
+        int? page = null,
+        int? pageSize = null,
+        CancellationToken ct = default)
     {
-        return await db.Categories
-            .AsNoTracking()
+        var (normalizedPage, normalizedPageSize) = Pagination.Normalize(page, pageSize);
+        var query = db.Categories.AsNoTracking();
+
+        var totalCount = await query.CountAsync(ct);
+        var totalPages = Pagination.GetTotalPages(totalCount, normalizedPageSize);
+        normalizedPage = Pagination.ClampPage(normalizedPage, totalPages);
+
+        var items = await query
             .OrderBy(c => c.Name)
+            .Skip((normalizedPage - 1) * normalizedPageSize)
+            .Take(normalizedPageSize)
             .Select(c => new CategoryDto
             {
                 Id = c.Id,
@@ -20,6 +32,14 @@ public class CategoryService(ApplicationDbContext db) : ICategoryService
                 ItemsCount = c.Items.Count,
             })
             .ToListAsync(ct);
+
+        return new PagedIndexDto<CategoryDto>
+        {
+            Items = items,
+            Page = normalizedPage,
+            PageSize = normalizedPageSize,
+            TotalCount = totalCount,
+        };
     }
 
     public async Task<CategoryDto?> GetAsync(int id, CancellationToken ct = default)

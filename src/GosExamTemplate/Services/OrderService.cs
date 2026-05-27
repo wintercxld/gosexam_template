@@ -1,4 +1,5 @@
 using GosExamTemplate.Data;
+using GosExamTemplate.Dtos.Common;
 using GosExamTemplate.Dtos.Orders;
 using GosExamTemplate.Models.Entities;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -8,12 +9,23 @@ namespace GosExamTemplate.Services;
 
 public class OrderService(ApplicationDbContext db) : IOrderService
 {
-    public async Task<IReadOnlyList<OrderListDto>> GetMyOrdersAsync(string userId, CancellationToken ct = default)
+    public async Task<PagedIndexDto<OrderListDto>> GetMyOrdersAsync(
+        string userId,
+        int? page = null,
+        int? pageSize = null,
+        CancellationToken ct = default)
     {
-        return await db.Orders
-            .AsNoTracking()
-            .Where(o => o.UserId == userId)
+        var (normalizedPage, normalizedPageSize) = Pagination.Normalize(page, pageSize);
+        var query = db.Orders.AsNoTracking().Where(o => o.UserId == userId);
+
+        var totalCount = await query.CountAsync(ct);
+        var totalPages = Pagination.GetTotalPages(totalCount, normalizedPageSize);
+        normalizedPage = Pagination.ClampPage(normalizedPage, totalPages);
+
+        var items = await query
             .OrderByDescending(o => o.CreatedAt)
+            .Skip((normalizedPage - 1) * normalizedPageSize)
+            .Take(normalizedPageSize)
             .Select(o => new OrderListDto
             {
                 Id = o.Id,
@@ -27,6 +39,14 @@ public class OrderService(ApplicationDbContext db) : IOrderService
                 UserName = o.User != null ? o.User.DisplayName : string.Empty,
             })
             .ToListAsync(ct);
+
+        return new PagedIndexDto<OrderListDto>
+        {
+            Items = items,
+            Page = normalizedPage,
+            PageSize = normalizedPageSize,
+            TotalCount = totalCount,
+        };
     }
 
     public async Task<OrderListDto?> GetAsync(int id, string userId, CancellationToken ct = default)

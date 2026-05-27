@@ -1,4 +1,4 @@
-@model IReadOnlyList<GosExamTemplate.Dtos.Tags.TagDto>
+@model GosExamTemplate.Dtos.Common.PagedIndexDto<GosExamTemplate.Dtos.Tags.TagDto>
 @{
     ViewData["Title"] = "Теги";
 }
@@ -8,7 +8,12 @@
     <a asp-action="Create" class="btn btn-primary">Новый тег</a>
 </section>
 
-@if (Model.Count == 0)
+@if (Model.TotalCount > 0)
+{
+    <p class="text-muted small mb-2">Всего: @Model.TotalCount</p>
+}
+
+@if (Model.Items.Count == 0)
 {
     <div class="empty-state">Тегов пока нет.</div>
 }
@@ -25,7 +30,7 @@ else
                     </tr>
                 </thead>
                 <tbody>
-                @foreach (var t in Model)
+                @foreach (var t in Model.Items)
                 {
                     <tr>
                         <td><span class="tag-chip">#@t.Name</span></td>
@@ -40,4 +45,5 @@ else
             </table>
         </div>
     </div>
+    <partial name="_Pagination" model="@(Model.ToPagination("Tags", "Index"))" />
 }

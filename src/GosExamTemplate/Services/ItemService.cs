@@ -1,4 +1,5 @@
 using GosExamTemplate.Data;
+using GosExamTemplate.Dtos.Common;
 using GosExamTemplate.Dtos.Items;
 using GosExamTemplate.Dtos.Orders;
 using GosExamTemplate.Models.Entities;
@@ -38,7 +39,15 @@ public class ItemService(ApplicationDbContext db) : IItemService
         if (filter.PriceTo is decimal priceTo)
             query = query.Where(i => i.Price <= priceTo);
 
-        filter.Items = await ProjectToList(query.OrderByDescending(i => i.CreatedAt), ct);
+        (filter.Page, filter.PageSize) = Pagination.Normalize(filter.Page, filter.PageSize);
+        filter.TotalCount = await query.CountAsync(ct);
+        filter.Page = Pagination.ClampPage(filter.Page, filter.TotalPages);
+
+        filter.Items = await ProjectToList(
+            query.OrderByDescending(i => i.CreatedAt)
+                .Skip((filter.Page - 1) * filter.PageSize)
+                .Take(filter.PageSize),
+            ct);
         filter.AvailableCategories = await GetCategoryOptionsAsync(filter.CategoryId, ct);
         return filter;
     }
@@ -70,7 +79,15 @@ public class ItemService(ApplicationDbContext db) : IItemService
         if (filter.PriceTo is decimal priceTo)
             query = query.Where(i => i.Price <= priceTo);
 
-        filter.Items = await ProjectToList(query.OrderByDescending(i => i.CreatedAt), ct);
+        (filter.Page, filter.PageSize) = Pagination.Normalize(filter.Page, filter.PageSize);
+        filter.TotalCount = await query.CountAsync(ct);
+        filter.Page = Pagination.ClampPage(filter.Page, filter.TotalPages);
+
+        filter.Items = await ProjectToList(
+            query.OrderByDescending(i => i.CreatedAt)
+                .Skip((filter.Page - 1) * filter.PageSize)
+                .Take(filter.PageSize),
+            ct);
         filter.AvailableTags = await GetTagOptionsAsync(filter.TagId, ct);
         filter.AvailableOwners = await db.Users
             .AsNoTracking()

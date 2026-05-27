@@ -112,6 +112,10 @@ public static class DbSeeder
             BuildItem("Йога-мат премиум", "Нескользящий коврик, толщина 6 мм, удобный ремень для переноски.", 1800m, users[2], categories[4], tags, [3, 4]),
             BuildItem("Кофемашина капсульная", "Бесшумная, готовит за 30 секунд. В комплекте 20 капсул.", 7990m, users[0], categories[0], tags, [1, 5]),
             BuildItem("Велосипед городской", "Скоростной городской велосипед, 7 передач, размер M.", 18900m, users[1], categories[4], tags, [5]),
+            BuildItem("Bluetooth-колонка", "Компактная колонка с басом, защита IPX7, до 12 часов.", 3200m, users[0], categories[0], tags, [0, 2]),
+            BuildItem("Планшет 10 дюймов", "Full HD экран, 128 ГБ, стилус в комплекте.", 24900m, users[1], categories[0], tags, [1, 5]),
+            BuildItem("Городской рюкзак", "Отделение для ноутбука 15\", водоотталкивающая ткань.", 2900m, users[2], categories[2], tags, [3, 4]),
+            BuildItem("Настольная лампа LED", "Регулировка яркости и цвета, USB-порт для зарядки.", 1650m, users[2], categories[3], tags, [2, 4]),
         };
 
         for (int idx = 0; idx < items.Count; idx++)

@@ -9,9 +9,9 @@ namespace GosExamTemplate.Controllers;
 public class CategoriesController(ICategoryService categories) : Controller
 {
     [HttpGet]
-    public async Task<IActionResult> Index(CancellationToken ct)
+    public async Task<IActionResult> Index(int? page, int? pageSize, CancellationToken ct)
     {
-        var model = await categories.GetAllAsync(ct);
+        var model = await categories.GetPagedAsync(page, pageSize, ct);
         return View(model);
     }
 

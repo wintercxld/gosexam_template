@@ -1,4 +1,5 @@
 using GosExamTemplate.Data;
+using GosExamTemplate.Dtos.Common;
 using GosExamTemplate.Dtos.Tags;
 using GosExamTemplate.Models.Entities;
 using Microsoft.EntityFrameworkCore;
@@ -7,11 +8,22 @@ namespace GosExamTemplate.Services;
 
 public class TagService(ApplicationDbContext db) : ITagService
 {
-    public async Task<IReadOnlyList<TagDto>> GetAllAsync(CancellationToken ct = default)
+    public async Task<PagedIndexDto<TagDto>> GetPagedAsync(
+        int? page = null,
+        int? pageSize = null,
+        CancellationToken ct = default)
     {
-        return await db.Tags
-            .AsNoTracking()
+        var (normalizedPage, normalizedPageSize) = Pagination.Normalize(page, pageSize);
+        var query = db.Tags.AsNoTracking();
+
+        var totalCount = await query.CountAsync(ct);
+        var totalPages = Pagination.GetTotalPages(totalCount, normalizedPageSize);
+        normalizedPage = Pagination.ClampPage(normalizedPage, totalPages);
+
+        var items = await query
             .OrderBy(t => t.Name)
+            .Skip((normalizedPage - 1) * normalizedPageSize)
+            .Take(normalizedPageSize)
             .Select(t => new TagDto
             {
                 Id = t.Id,
@@ -19,6 +31,14 @@ public class TagService(ApplicationDbContext db) : ITagService
                 ItemsCount = t.ItemTags.Count,
             })
             .ToListAsync(ct);
+
+        return new PagedIndexDto<TagDto>
+        {
+            Items = items,
+            Page = normalizedPage,
+            PageSize = normalizedPageSize,
+            TotalCount = totalCount,
+        };
     }
 
     public async Task<TagDto?> GetAsync(int id, CancellationToken ct = default)

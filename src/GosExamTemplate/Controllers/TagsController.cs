@@ -9,9 +9,9 @@ namespace GosExamTemplate.Controllers;
 public class TagsController(ITagService tags) : Controller
 {
     [HttpGet]
-    public async Task<IActionResult> Index(CancellationToken ct)
+    public async Task<IActionResult> Index(int? page, int? pageSize, CancellationToken ct)
     {
-        var model = await tags.GetAllAsync(ct);
+        var model = await tags.GetPagedAsync(page, pageSize, ct);
         return View(model);
     }
 
